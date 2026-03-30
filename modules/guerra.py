@@ -5,10 +5,12 @@ from rich.console import Console
 console = Console()
 
 class Guerra:
-    def __init__(self, exercitos):
+    def __init__(self, grupos):
 
-        self.exercitos = exercitos
-        self.tropas_ativas = exercitos
+        self.exercitos = grupos
+        self.tropas_ativas = self.exercitos[:]
+
+        self.calcular_flow()
 
         self.tempo = Tempo(self)
 
@@ -215,7 +217,7 @@ class Guerra:
             )
         ]
 
-        self.calcular_conclusao(eventos)
+        self.calcular_conclusao(eventos, tipo="single")
 
 
     def melhoria(self, a):
@@ -356,7 +358,7 @@ class Guerra:
             )
         ]
         
-        self.calcular_conclusao(eventos)
+        self.calcular_conclusao(eventos, tipo="single")
 
 
     def clima(self, a):
@@ -401,14 +403,14 @@ class Guerra:
                     f"O clima ensolarado cria condições ideais para movimentação tática.",
                     f"{a.nome} aproveita para consolidar posições e ganhar força.",
                     lambda: setattr(a, 'forca', a.forca + self.poder_do_round),
-                    f"{a.inimigo.nome} usa o clima para treinos coordenados, aprimorando estratégia.",
-                    lambda: setattr(a.inimigo, 'estrategia', a.inimigo.estrategia + self.poder_do_round)
+                    f"[#00ff00]{a.nome} usa o clima para treinos coordenados, aprimorando estratégia.[/#00ff00]",
+                    lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"O calor intenso do clima ensolarado causa desgaste geral nas tropas.",
-                    f"{a.inimigo.nome} tem queda de moral devido à exaustão térmica.",
-                    lambda: setattr(a.inimigo, 'moral', a.inimigo.moral - self.poder_do_round),
+                    f"[#ff6161]{a.nome} tem queda de moral devido à exaustão térmica.[/#ff6161]",
+                    lambda: setattr(a, 'moral', a.moral - self.poder_do_round),
                     f"{a.nome} sofre com perda de suprimentos devido ao calor.",
                     lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
                 )
@@ -451,14 +453,14 @@ class Guerra:
                     f"O clima nublado reduz a visibilidade, abrindo espaço para manobras criativas.",
                     f"{a.nome} aproveita para reorganizar discretamente suas posições, aumentando estratégia.",
                     lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round),
-                    f"{a.inimigo.nome} utiliza a baixa visibilidade para movimentações rápidas, fortalecendo a força.",
-                    lambda: setattr(a.inimigo, 'forca', a.inimigo.forca + self.poder_do_round)
+                    f"[#00ff00]{a.nome} utiliza a baixa visibilidade para movimentações rápidas, fortalecendo a força.[/#00ff00]",
+                    lambda: setattr(a, 'forca', a.forca + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"O clima nublado cria instabilidade no campo de batalha.",
-                    f"A baixa luminosidade reduz a precisão e o moral de {a.inimigo.nome}.",
-                    lambda: setattr(a.inimigo, 'moral', a.inimigo.moral - self.poder_do_round),
+                    f"[#ff6161]A baixa luminosidade reduz a precisão e o moral de {a.nome}.[/#ff6161]",
+                    lambda: setattr(a, 'moral', a.moral - self.poder_do_round),
                     f"A umidade do clima afeta munições e reduz os suprimentos de {a.nome}.",
                     lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
                 )
@@ -501,14 +503,14 @@ class Guerra:
                     f"A chuva leve suaviza ruídos no campo de batalha.",
                     f"{a.nome} aproveita para fortalecer suprimentos discretamente.",
                     lambda: setattr(a, 'suprimentos', a.suprimentos + self.poder_do_round),
-                    f"{a.inimigo.nome} utiliza a mesma vantagem sonora para treinar movimentos táticos.",
-                    lambda: setattr(a.inimigo, 'estrategia', a.inimigo.estrategia + self.poder_do_round)
+                    f"[#00ff00]{a.nome} utiliza a mesma vantagem sonora para treinar movimentos táticos.[/#00ff00]",
+                    lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"A chuva leve torna o solo escorregadio e imprevisível.",
-                    f"{a.inimigo.nome} sofre com redução de suprimentos por avarias causadas pela umidade.",
-                    lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                    f"[#ff6161]{a.nome} sofre com redução de suprimentos por avarias causadas pela umidade.[/#ff6161]",
+                    lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round),
                     f"{a.nome} perde parte de sua força devido a acidentes menores.",
                     lambda: setattr(a, 'forca', a.forca - self.poder_do_round)
                 )
@@ -551,14 +553,14 @@ class Guerra:
                     f"A chuva forte reduz drasticamente a visibilidade no campo.",
                     f"{a.nome} usa isso para reforçar posições defensivas, aumentando estratégia.",
                     lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round),
-                    f"{a.inimigo.nome} realiza movimentações rápidas sem ser detectado, aumentando força.",
-                    lambda: setattr(a.inimigo, 'forca', a.inimigo.forca + self.poder_do_round)
+                    f"[#00ff00]{a.nome} realiza movimentações rápidas sem ser detectado, aumentando força.[/#00ff00]",
+                    lambda: setattr(a, 'forca', a.forca + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"A chuva forte transforma o terreno em puro lamaçal.",
-                    f"{a.inimigo.nome} sofre danos nos equipamentos, reduzindo tecnologia.",
-                    lambda: setattr(a.inimigo, 'tecnologia', a.inimigo.tecnologia - self.poder_do_round),
+                    f"[#ff6161]{a.nome} sofre danos nos equipamentos, reduzindo tecnologia.[/#ff6161]",
+                    lambda: setattr(a, 'tecnologia', a.tecnologia - self.poder_do_round),
                     f"{a.nome} perde moral devido ao desgaste físico constante.",
                     lambda: setattr(a, 'moral', a.moral - self.poder_do_round)
                 )
@@ -601,14 +603,14 @@ class Guerra:
                     f"A tempestade cria caos natural, abrindo oportunidades inesperadas.",
                     f"{a.nome} usa o clima para melhorar técnicas de adaptação, elevando moral.",
                     lambda: setattr(a, 'moral', a.moral + self.poder_do_round),
-                    f"{a.inimigo.nome} usa o caos climático para movimentos agressivos, aumentando força.",
-                    lambda: setattr(a.inimigo, 'forca', a.inimigo.forca + self.poder_do_round)
+                    f"[#00ff00]{a.nome} usa o caos climático para movimentos agressivos, aumentando força.[/#00ff00]",
+                    lambda: setattr(a, 'forca', a.forca + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"A tempestade causa destruição generalizada em todo o campo de batalha.",
-                    f"{a.inimigo.nome} sofre danos em dispositivos sensíveis, perdendo tecnologia.",
-                    lambda: setattr(a.inimigo, 'tecnologia', a.inimigo.tecnologia - self.poder_do_round),
+                    f"[#ff6161]{a.nome} sofre danos em dispositivos sensíveis, perdendo tecnologia.[/#ff6161]",
+                    lambda: setattr(a, 'tecnologia', a.tecnologia - self.poder_do_round),
                     f"{a.nome} perde moral devido às condições severas e à exaustão.",
                     lambda: setattr(a, 'moral', a.moral - self.poder_do_round)
                 )
@@ -651,14 +653,14 @@ class Guerra:
                     f"A tormenta elétrica cria janelas de instabilidade nos sistemas do campo todo.",
                     f"{a.nome} aproveita para reforçar protocolos de segurança, aumentando tecnologia.",
                     lambda: setattr(a, 'tecnologia', a.tecnologia + self.poder_do_round),
-                    f"{a.inimigo.nome} usa a escuridão intermitente para fortalecer estratégias furtivas.",
-                    lambda: setattr(a.inimigo, 'estrategia', a.inimigo.estrategia + self.poder_do_round)
+                    f"[#00ff00]{a.nome} usa a escuridão intermitente para fortalecer estratégias furtivas.[/#00ff00]",
+                    lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"A tormenta elétrica causa sobrecarga generalizada no campo.",
-                    f"{a.inimigo.nome} sofre queda abrupta de moral devido ao caos dos relâmpagos.",
-                    lambda: setattr(a.inimigo, 'moral', a.inimigo.moral - self.poder_do_round),
+                    f"[#ff6161]{a.nome} sofre queda abrupta de moral devido ao caos dos relâmpagos.[/#ff6161]",
+                    lambda: setattr(a, 'moral', a.moral - self.poder_do_round),
                     f"{a.nome} perde suprimentos devido a explosões em depósitos energizados.",
                     lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
                 )
@@ -701,14 +703,14 @@ class Guerra:
                     f"A ventania muda padrões de movimentação no campo de batalha.",
                     f"{a.nome} usa o clima para fortalecer sua estratégia defensiva.",
                     lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round),
-                    f"{a.inimigo.nome} aproveita o vento para executar ataques rápidos e aumentar força.",
-                    lambda: setattr(a.inimigo, 'forca', a.inimigo.forca + self.poder_do_round)
+                    f"[#00ff00]{a.nome} aproveita o vento para executar ataques rápidos e aumentar força.[/#00ff00]",
+                    lambda: setattr(a, 'forca', a.forca + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"A ventania alcança níveis perigosos, criando caos estrutural.",
-                    f"{a.inimigo.nome} sofre quedas de moral, já que o vento dificulta comunicação.",
-                    lambda: setattr(a.inimigo, 'moral', a.inimigo.moral - self.poder_do_round),
+                    f"[#ff6161]{a.nome} sofre quedas de moral, já que o vento dificulta comunicação.[/#ff6161]",
+                    lambda: setattr(a, 'moral', a.moral - self.poder_do_round),
                     f"{a.nome} perde tecnologia devido a falhas causadas pelo vento forte.",
                     lambda: setattr(a, 'tecnologia', a.tecnologia - self.poder_do_round)
                 )
@@ -751,14 +753,14 @@ class Guerra:
                     f"O nevoeiro reduz a linha de visão para todos.",
                     f"{a.nome} aproveita para reforçar posições defensivas, aumentando força.",
                     lambda: setattr(a, 'forca', a.forca + self.poder_do_round),
-                    f"{a.inimigo.nome} usa a baixa visibilidade para treinar manobras furtivas, ganhando estratégia.",
-                    lambda: setattr(a.inimigo, 'estrategia', a.inimigo.estrategia + self.poder_do_round)
+                    f"[#00ff00]{a.nome} usa a baixa visibilidade para treinar manobras furtivas, ganhando estratégia.[/#00ff00]",
+                    lambda: setattr(a, 'estrategia', a.estrategia + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"O nevoeiro cria confusão generalizada no campo de batalha.",
-                    f"{a.inimigo.nome} perde moral devido ao nervosismo provocado pelo clima opressivo.",
-                    lambda: setattr(a.inimigo, 'moral', a.inimigo.moral - self.poder_do_round),
+                    f"[#ff6161]{a.nome} perde moral devido ao nervosismo provocado pelo clima opressivo.[/#ff6161]",
+                    lambda: setattr(a, 'moral', a.moral - self.poder_do_round),
                     f"{a.nome} perde força após acidentes causados pela baixa visibilidade.",
                     lambda: setattr(a, 'forca', a.forca - self.poder_do_round)
                 )
@@ -801,14 +803,14 @@ class Guerra:
                     f"A temperatura congelante cria novas oportunidades estratégicas.",
                     f"{a.nome} usa o frio para treinar resistência, aumentando moral.",
                     lambda: setattr(a, 'moral', a.moral + self.poder_do_round),
-                    f"{a.inimigo.nome} adapta suas tropas para sobrevivência em clima gelado, aumentando suprimentos.",
-                    lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos + self.poder_do_round)
+                    f"[#00ff00]{a.nome} adapta suas tropas para sobrevivência em clima gelado, aumentando suprimentos.[/#00ff00]",
+                    lambda: setattr(a, 'suprimentos', a.suprimentos + self.poder_do_round)
                 ),
                 Evento(
                     a, 
                     f"O frio intenso causa congelamento de mecanismos e estruturas.",
-                    f"{a.inimigo.nome} sofre queda de força pela rigidez muscular do clima.",
-                    lambda: setattr(a.inimigo, 'forca', a.inimigo.forca - self.poder_do_round),
+                    f"[#ff6161]{a.nome} sofre queda de força pela rigidez muscular do clima.[/#ff6161]",
+                    lambda: setattr(a, 'forca', a.forca - self.poder_do_round),
                     f"{a.nome} sofre queda tecnológica devido ao mau funcionamento dos equipamentos.",
                     lambda: setattr(a, 'tecnologia', a.tecnologia - self.poder_do_round)
                 )
@@ -851,14 +853,14 @@ class Guerra:
                     f"O calor extremo força ambos os exércitos a adaptarem suas rotinas.",
                     f"{a.nome} melhora métodos de resfriamento e ganha eficiência tecnológica.",
                     lambda: setattr(a, 'tecnologia', a.tecnologia + self.poder_do_round),
-                    f"{a.inimigo.nome} reorganiza suas fileiras para lidar com o clima, aumentando moral.",
-                    lambda: setattr(a.inimigo, 'moral', a.inimigo.moral + self.poder_do_round)
+                    f"[#00ff00]{a.nome} reorganiza suas fileiras para lidar com o clima, aumentando moral.[/#00ff00]",
+                    lambda: setattr(a, 'moral', a.moral + self.poder_do_round)
                 ),
                 Evento(
                     a,
                     f"O calor extremo provoca colapso de equipamentos e queda de rendimento.",
-                    f"{a.inimigo.nome} perde suprimentos que derretem, queimam ou evaporam.",
-                    lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                    f"[#ff6161]{a.nome} perde suprimentos que derretem, queimam ou evaporam.[/#ff6161]",
+                    lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round),
                     f"{a.nome} sofre perda de força devido ao desgaste físico.",
                     lambda: setattr(a, 'forca', a.forca - self.poder_do_round),
                 )
@@ -869,7 +871,7 @@ class Guerra:
 
         possiveis_eventos = eventos[clima[0].lower()]
 
-        self.calcular_conclusao(possiveis_eventos)
+        self.calcular_conclusao(possiveis_eventos, tipo="single")
 
 
     def tecnologia(self, a):
@@ -961,77 +963,77 @@ class Guerra:
                 lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
             ),
             Evento(
-                        a,
-                        f"{a.nome} bombardeia depósitos de suprimentos de {a.inimigo.nome}.",
-                        "O ataque é bem-sucedido e destrói grandes estoques de alimentos e munições.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "O ataque falha e a ofensiva consome grande parte dos próprios recursos.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+                a,
+                f"{a.nome} bombardeia depósitos de suprimentos de {a.inimigo.nome}.",
+                "O ataque é bem-sucedido e destrói grandes estoques de alimentos e munições.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "O ataque falha e a ofensiva consome grande parte dos próprios recursos.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"{a.nome} tenta interromper rotas de abastecimento de {a.inimigo.nome}.",
-                        "As rotas são bloqueadas, causando escassez crítica no exército inimigo.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "A operação falha e as tropas gastam recursos sem retorno.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+            Evento(
+                a,
+                f"{a.nome} tenta interromper rotas de abastecimento de {a.inimigo.nome}.",
+                "As rotas são bloqueadas, causando escassez crítica no exército inimigo.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "A operação falha e as tropas gastam recursos sem retorno.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"Forças especiais de {a.nome} tentam sabotar armazéns logísticos de {a.inimigo.nome}.",
-                        "A sabotagem é bem-sucedida e compromete o abastecimento inimigo.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "A equipe é descoberta e a missão gera perdas logísticas.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+            Evento(
+                a,
+                f"Forças especiais de {a.nome} tentam sabotar armazéns logísticos de {a.inimigo.nome}.",
+                "A sabotagem é bem-sucedida e compromete o abastecimento inimigo.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "A equipe é descoberta e a missão gera perdas logísticas.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"{a.nome} tenta destruir comboios de combustível de {a.inimigo.nome}.",
-                        "Os comboios são destruídos, reduzindo drasticamente a mobilidade inimiga.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "O ataque falha e o esforço logístico se torna um desperdício.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+            Evento(
+                a,
+                f"{a.nome} tenta destruir comboios de combustível de {a.inimigo.nome}.",
+                "Os comboios são destruídos, reduzindo drasticamente a mobilidade inimiga.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "O ataque falha e o esforço logístico se torna um desperdício.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"{a.nome} realiza um ataque aéreo contra centros de distribuição de {a.inimigo.nome}.",
-                        "Os centros são atingidos e o abastecimento inimigo entra em colapso.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "A missão falha e consome combustível e munições valiosas.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+            Evento(
+                a,
+                f"{a.nome} realiza um ataque aéreo contra centros de distribuição de {a.inimigo.nome}.",
+                "Os centros são atingidos e o abastecimento inimigo entra em colapso.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "A missão falha e consome combustível e munições valiosas.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"{a.nome} tenta envenenar ou inutilizar reservas de suprimentos de {a.inimigo.nome}.",
-                        "As reservas inimigas se tornam inutilizáveis.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "A tentativa falha e parte dos próprios suprimentos é perdida.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+            Evento(
+                a,
+                f"{a.nome} tenta envenenar ou inutilizar reservas de suprimentos de {a.inimigo.nome}.",
+                "As reservas inimigas se tornam inutilizáveis.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "A tentativa falha e parte dos próprios suprimentos é perdida.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"{a.nome} tenta capturar depósitos de suprimentos abandonados por {a.inimigo.nome}.",
-                        "Os depósitos são destruídos para evitar reaproveitamento inimigo.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "A operação falha e os recursos próprios se esgotam durante a tentativa.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    ),
+            Evento(
+                a,
+                f"{a.nome} tenta capturar depósitos de suprimentos abandonados por {a.inimigo.nome}.",
+                "Os depósitos são destruídos para evitar reaproveitamento inimigo.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "A operação falha e os recursos próprios se esgotam durante a tentativa.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            ),
 
-                    Evento(
-                        a,
-                        f"{a.nome} tenta interromper linhas ferroviárias usadas por {a.inimigo.nome}.",
-                        "A interrupção é bem-sucedida e prejudica seriamente a logística inimiga.",
-                        lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
-                        "A ação falha e exige consumo excessivo de recursos logísticos.",
-                        lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
-                    )
-                ]
+            Evento(
+                a,
+                f"{a.nome} tenta interromper linhas ferroviárias usadas por {a.inimigo.nome}.",
+                "A interrupção é bem-sucedida e prejudica seriamente a logística inimiga.",
+                lambda: setattr(a.inimigo, 'suprimentos', a.inimigo.suprimentos - self.poder_do_round),
+                "A ação falha e exige consumo excessivo de recursos logísticos.",
+                lambda: setattr(a, 'suprimentos', a.suprimentos - self.poder_do_round)
+            )
+        ]
 
         self.calcular_conclusao(eventos)
 
@@ -1295,7 +1297,7 @@ class Guerra:
         if a.operacao_marechal:
             self.poder(a)
             return
-
+        
         else:
             eventos = [
                 (self.poder, 5),
@@ -1325,7 +1327,7 @@ class Guerra:
                 (self.operacoes, 2),
                 (self.matar_marechal, 1)
             ]
-            '''
+        '''
 
         func = choices(
             [e for e, _ in eventos],
@@ -1442,33 +1444,33 @@ class Guerra:
             },
 
             "evento2": {
-                "Fase 1": f"{a.nome} inicia operação de inteligência, espalhando rumores de ataque em outra frente.",
-                "Fase 2": f"{a.inimigo.marechal['nome']} desloca parte de suas forças para responder à ameaça inexistente, enquanto a emboscada é organizada.",
-                "Fase 3": f"{a.nome} monta uma emboscada na rota recém-utilizada pelo marechal.",
-                "sucesso": f"A armadilha se fecha e {a.inimigo.marechal['nome']} é morto durante o deslocamento.",
-                "falha": f"{a.inimigo.marechal['nome']} muda o trajeto ao perceber intenções inimigas e escapa da emboscada."
+                "Fase 1": f"{a.nome} inicia operação de inteligência, espalhando rumores de ataque em uma das frentes de {a.inimigo.marechal['nome']}.",
+                "Fase 2": f"{a.inimigo.marechal['nome']} desloca parte de suas forças para responder à ameaça inexistente, enquanto {a.nome} organiza a emboscada.",
+                "Fase 3": f"{a.nome} monta uma emboscada na rota recém-utilizada por {a.inimigo.marechal['nome']}.",
+                "sucesso": f"A armadilha de {a.nome} se fecha e {a.inimigo.marechal['nome']} é morto durante o deslocamento.",
+                "falha": f"{a.inimigo.marechal['nome']} muda o trajeto ao perceber intenções de {a.nome} e escapa da emboscada."
             },
 
             "evento3": {
-                "Fase 1": f"Pequenos ataques testam a prontidão das defesas sob comando de {a.inimigo.marechal['nome']}.",
-                "Fase 2": f"Relatórios de {a.nome} revelam uma brecha crítica na segurança pessoal do marechal. A brecha começa a ser estudada.",
-                "Fase 3": f"{a.nome} concentra forças exatamente nessa brecha crítica.",
-                "sucesso": f"O ataque atravessa a defesa e elimina {a.inimigo.marechal['nome']} de forma decisiva.",
-                "falha": f"A brecha de {a.inimigo.nome} é reforçada a tempo e o ataque é repelido com perdas."
+                "Fase 1": f"Pequenos ataques de {a.nome} testam a prontidão das defesas sob comando de {a.inimigo.marechal['nome']}.",
+                "Fase 2": f"Relatórios de {a.nome} revelam uma brecha crítica na segurança pessoal de {a.inimigo.marechal['nome']}. A brecha começa a ser estudada.",
+                "Fase 3": f"{a.nome} concentra forças exatamente nessa brecha crítica de {a.inimigo.marechal['nome']}.",
+                "sucesso": f"O ataque de {a.nome} atravessa a defesa e elimina {a.inimigo.marechal['nome']} de forma decisiva.",
+                "falha": f"A brecha de {a.inimigo.marechal['nome']} é reforçada a tempo e o ataque de {a.nome} é repelido com perdas."
             },
 
             "evento4": {
-                "Fase 1": f"Rotas de suprimento ligadas a {a.inimigo.marechal['nome']} começam a ser neutralizadas.",
-                "Fase 2": f"A pressão logística gera desgaste e decisões apressadas no comando de {a.inimigo.marechal['nome']}.",
+                "Fase 1": f"Rotas de suprimento ligadas a {a.inimigo.marechal['nome']} começam a ser neutralizadas por {a.nome}.",
+                "Fase 2": f"A pressão logística de {a.nome}gera desgaste e decisões apressadas no comando de {a.inimigo.marechal['nome']}.",
                 "Fase 3": f"{a.nome} fecha o cerco enquanto {a.inimigo.marechal['nome']} tenta reorganizar suas forças.",
-                "sucesso": f"Durante a tentativa de retirada, {a.inimigo.marechal['nome']} é alcançado e morto.",
-                "falha": f"O cerco falha e {a.inimigo.marechal['nome']} rompe as linhas, escapando."
+                "sucesso": f"Durante a tentativa de retirada, {a.inimigo.marechal['nome']} é alcançado pelas tropas de {a.nome} e morto.",
+                "falha": f"O cerco falha e {a.inimigo.marechal['nome']} rompe as linhas de {a.nome}, escapando."
             },
 
             "evento5": {
                 "Fase 1": f"Agentes de {a.nome} conseguem se infiltrar e se passam por aliados próximos a {a.inimigo.marechal['nome']}.",
                 "Fase 2": f"Ordens contraditórias começam a circular dentro do comando de {a.inimigo.marechal['nome']}.",
-                "Fase 3": f"A cadeia de comando percebe que há algo de errado e operação de contraintelgência entra em vigor às pressas.",
+                "Fase 3": f"A cadeia de comando de {a.inimigo.marechal['nome']} percebe que há algo de errado e operação de contraintelgência entra em vigor às pressas.",
                 "sucesso": f"Sem que ninguém esperasse, {a.inimigo.marechal['nome']} é encontrado morto em seus aposentos. Causa da morte a ser investigada.",
                 "falha": f"A infiltração de {a.nome} é descoberta e os agentes são capturados."
             },
@@ -1478,12 +1480,12 @@ class Guerra:
                 "Fase 2": f"{a.nome} forja uma fraqueza em um ponto crítico de sua organização.",
                 "Fase 3": f"Agentes militares são posicionados, aguardando a investida de {a.inimigo.marechal['nome']} para fechar a armadilha.",
                 "sucesso": f"{a.inimigo.marechal['nome']} avança confiante demais e é morto na armadilha.",
-                "falha": f"{a.inimigo.marechal['nome']} desconfia da isca e recua antes do ataque."
+                "falha": f"{a.inimigo.marechal['nome']} desconfia da isca e recua antes do ataque de {a.nome}."
             },
 
             "evento7": {
-                "Fase 1": f"Relatórios investigativos detalham a composição da guarda pessoal de {a.inimigo.marechal['nome']}.",
-                "Fase 2": f"Membros da escolta de {a.inimigo.marechal['nome']} são neutralizados gradualmente ao longo de dias.",
+                "Fase 1": f"Relatórios investigativos de {a.nome} detalham a composição da guarda pessoal de {a.inimigo.marechal['nome']}.",
+                "Fase 2": f"Membros da escolta de {a.inimigo.marechal['nome']} são neutralizados gradualmente por {a.nome} ao longo de dias.",
                 "Fase 3": f"{a.inimigo.marechal['nome']} fica isolado de sua proteção principal, vulnerável a qualquer ataque.",
                 "sucesso": f"{a.nome} executa o ataque final a {a.inimigo.marechal['nome']} sem resistência significativa. O marechal está morto",
                 "falha": f"Reforços chegam a tempo e restauram a segurança de {a.inimigo.marechal['nome']}."
@@ -1494,29 +1496,27 @@ class Guerra:
                 "Fase 2": f"O centro de comando de {a.inimigo.nome} fica sobrecarregado com a defesa de várias frentes.",
                 "Fase 3": f"{a.nome} se posiciona, aguardando maior vulnerabilidade do quartel avançado de {a.inimigo.marechal['nome']}.",
                 "sucesso": f"O golpe atinge o coração do comando e elimina {a.inimigo.marechal['nome']}.",
-                "falha": f"A distração não funciona e o ataque principal é detectado por {a.inimigo.marechal['nome']}."
+                "falha": f"A distração de {a.nome} não funciona e o ataque principal é detectado por {a.inimigo.marechal['nome']}."
             },
 
             "evento9": {
-                "Fase 1": f"Campanhas de desinformação por {a.nome} começam a minar a confiança no marechal {a.inimigo.marechal['nome']}.",
+                "Fase 1": f"Campanhas de desinformação por {a.nome} começam a minar a confiança em {a.inimigo.marechal['nome']}.",
                 "Fase 2": f"Oficiais próximos a {a.inimigo.marechal['nome']} demonstram hesitação e medo.",
                 "Fase 3": f"Clima de desconfiança se instaura no comando de {a.inimigo.marechal['nome']}, levando a um grave erro estratégico.",
                 "sucesso": f"{a.nome} explora o erro de {a.inimigo.marechal['nome']} e elimina o marechal rapidamente.",
-                "falha": f"{a.inimigo.marechal['nome']} percebe a manipulação e envia capitães para corrigirem o erro a tempo."
+                "falha": f"{a.inimigo.marechal['nome']} percebe a manipulação de {a.nome} e envia capitães para corrigirem o erro a tempo."
             },
 
             "evento10": {
-                "Fase 1": f"{a.nome} inicia uma grande operação de distração em outra região.",
-                "Fase 2": "Tropas especializadas se movem silenciosamente para o alvo real.",
-                "Fase 3": "O marechal fica momentaneamente longe de suas forças principais.",
+                "Fase 1": f"{a.nome} inicia uma grande operação de distração em outra região controlada por {a.inimigo.nome}.",
+                "Fase 2": f"Tropas especializadas de {a.nome} se movem silenciosamente para o alvo real: {a.inimigo.marechal['nome']}.",
+                "Fase 3": f"{a.inimigo.marechal['nome']} fica momentaneamente longe de suas forças principais.",
                 "sucesso": f"{a.inimigo.marechal['nome']} é morto longe do campo principal de batalha.",
-                "falha": "A distração falha e o marechal retorna sob forte escolta."
+                "falha": f"A distração de {a.nome} falha e o marechal retorna sob forte escolta."
             }
-
         }
 
-
-        nome_operacao = f"Operação {choice(primeiro_nome)} {choice(segundo_nome)}"
+        nome_operacao = f"OPS. {choice(primeiro_nome)} {choice(segundo_nome)}"
 
         eventos = choice(list(eventos.values()))
 
@@ -1533,10 +1533,12 @@ class Guerra:
         a.operacao_marechal = {
             "nome": nome_operacao,
             "fase": "Fase 1",
-            "eventos": eventos}
+            "eventos": eventos,
+            "oponente": f'{a.inimigo.nome} - {a.inimigo.marechal["nome"]}'
+        }
         
         self.tempo.formatar_horario()
-        self.atualizar_horario()
+        self.tempo.atualizar_horario()
         
         self.executar_operacao_marechal(a)
     
@@ -1586,9 +1588,24 @@ class Guerra:
             a.poder += 3
             console.print(f"           [yellow]O marechal {a.inimigo.marechal['nome']} foi morto! O exército de {a.nome} ganhou [bold]+3[/bold] de poder por essa conquista.[/yellow]")
             sleep(2)
+            oponente_morto = a.operacao_marechal["oponente"]
+            marechal_morto = a.inimigo.marechal["nome"]
             a.operacao_marechal = False
             a.inimigo.marechal = a.inimigo.escolher_marechal()
             a.inimigo.descrever_marechal(novo=True)
+            inimigos = self.tropas_ativas[:]
+            inimigos.remove(a)
+            inimigos.remove(a.inimigo)
+
+            for inimigo in inimigos:
+                if inimigo.operacao_marechal:
+                    if inimigo.operacao_marechal["oponente"] == oponente_morto:
+                        console.print(f"           [yellow]Os planos de {inimigo.nome} para neutralizar {marechal_morto} foram frustrados![/yellow]")
+                        sleep(2)
+                        console.print(f"           [underline italic bold red1 on white] //{inimigo.operacao_marechal["nome"].upper()} ABORTADA.// [/underline italic bold red1 on white]")
+                        sleep(2)
+                        inimigo.operacao_marechal = False
+
         else:
             a.inimigo.poder += 2
             console.print(f"           [yellow]O marechal {a.inimigo.marechal['nome']} escapou de ser morto! O exército de {a.inimigo.nome} ganhou [bold]+2[/bold] de poder por essa escapada.[/yellow]")
@@ -1598,6 +1615,7 @@ class Guerra:
 
     def verificar_resultado(self, a):
         from random import choice, random
+        from time import sleep
 
         if a.marechal['perfil'] == 'Político':
             chance_a = 1.3
@@ -1609,10 +1627,12 @@ class Guerra:
         else:
             chance_b = 1
         
-        if a.inimigo.territorio < a.territorio / 5 and a.inimigo.territorio > 0:
+        if a.inimigo.territorio < a.territorio / 3 and a.inimigo.territorio > 0:
             if random() < (abs(a.territorio - a.inimigo.territorio) / (a.territorio + a.inimigo.territorio)) * 0.05 * chance_a * chance_b:
-                vencedor = a.nome
-                derrotado = a.inimigo.nome
+                vencedor_object = a
+                derrotado_object = a.inimigo
+                vencedor = vencedor_object.nome
+                derrotado = derrotado_object.nome
                 
                 frases = [
                     f"Com apenas pequenas áreas isoladas ainda sob seu controle, {derrotado} declarou rendição após perder a capacidade de administrar e defender seu território.",
@@ -1628,10 +1648,15 @@ class Guerra:
                 ]
 
                 self.ativa = False
+            
+            else:
+                return
         
         else:
-            derrotado = a.nome
-            vencedor = a.inimigo.nome
+            vencedor_object = a.inimigo
+            derrotado_object = a
+            derrotado = derrotado_object.nome
+            vencedor = vencedor_object.nome
 
             if a.forca <= 0:
                 frases = [
@@ -1641,7 +1666,6 @@ class Guerra:
                     f"Sem força para continuar, {derrotado} foi varrido do campo de batalha.",
                     f"A capacidade de combate de {derrotado} chegou ao fim, selando sua derrota total."
                 ]
-                self.ativa = False
                 a.forca = 0
 
             elif a.tecnologia <= 0:
@@ -1652,7 +1676,6 @@ class Guerra:
                     f"Sem comunicações ou armamentos avançados, {derrotado} sucumbiu à derrota.",
                     f"O colapso tecnológico de {derrotado} tornou qualquer resistência impossível."
                 ]
-                self.ativa = False
                 a.tecnologia = 0
 
             elif a.suprimentos <= 0:
@@ -1663,7 +1686,6 @@ class Guerra:
                     f"O esgotamento logístico selou o destino de {derrotado} no conflito.",
                     f"Privado de recursos essenciais, {derrotado} não conseguiu sustentar a guerra."
                 ]
-                self.ativa = False
                 a.suprimentos = 0
 
             elif a.moral <= 0:
@@ -1674,7 +1696,6 @@ class Guerra:
                     f"O desespero tomou conta das fileiras de {derrotado}, encerrando qualquer resistência.",
                     f"A perda total de moral levou {derrotado} a uma derrota inevitável."
                 ]
-                self.ativa = False
                 a.moral = 0
 
             elif a.estrategia <= 0:
@@ -1685,7 +1706,6 @@ class Guerra:
                     f"A falha estratégica deixou {derrotado} vulnerável em todos os flancos.",
                     f"O colapso do comando estratégico selou o fracasso de {derrotado}."
                 ]
-                self.ativa = False
                 a.estrategia = 0
             
             elif a.territorio <= 0:
@@ -1696,32 +1716,95 @@ class Guerra:
                     f"As forças inimigas tomaram cada posição restante de {derrotado}, eliminando qualquer domínio territorial.",
                     f"Sem território para defender ou administrar, {derrotado} foi forçado a aceitar a derrota total."
                 ]
-
-                self.ativa = False
                 a.territorio = 0
 
             else:
                 return
         
         frase = choice(frases)
+
+        derrotado_object.flow = 0
+        derrotado_object.nome = derrotado_object.nome_derrotado
+
+        self.tropas_ativas.remove(derrotado_object)
+
+        for tropa in self.tropas_ativas:
+            tropa.inimigos.remove(derrotado_object)
+
+        if len(self.tropas_ativas) == 1:
+            self.ativa = False
             
         if not self.ativa:
             self.tempo.atualizar_horario()
 
+            vencedor_object.flow = 100
+
             self.tabela_guerra()
+
+            oponentes = ''
+
+            for index, tropa in enumerate(self.exercitos):
+                if index == len(self.exercitos) - 2:
+                    oponentes += f'{tropa.nome_colorido} '
+                elif index == len(self.exercitos) - 1:
+                    oponentes += f'e {tropa.nome_colorido}'
+                else:
+                    oponentes += f'{tropa.nome_colorido}, '
 
             console.print(f"""[yellow]
 ===================================================================
 [{self.tempo.horario}] NOTÍCIA URGENTE: A GUERRA ACABOU!
-Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficial do conflito entre {vencedor} e {derrotado}.
+Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficial do conflito entre {oponentes}.
 {frase}
 {vencedor} venceu a guerra!
 ===================================================================
 [/yellow]""")
-            return True
+        
+        else:
+            oponentes = ''
+
+            for index, tropa in enumerate(self.tropas_ativas):
+                if index == len(self.tropas_ativas) - 2:
+                    oponentes += f'{tropa.nome} '
+                elif index == len(self.tropas_ativas) - 1:
+                    oponentes += f'e {tropa.nome}'
+                else:
+                    oponentes += f'{tropa.nome}, '
+            
+            console.print(f"""[yellow]
+===================================================================
+[{self.tempo.horario}] NOTÍCIA URGENTE: {derrotado_object.nome_colorido} acaba de ser derrotado por {vencedor}!
+{frase}
+A cobertura continua com o conflito entre {oponentes}.
+===================================================================
+[/yellow]""")
+            sleep(2)
+
+            exercito_e_marechal_morto = f"{derrotado_object.nome} - {derrotado_object.marechal['nome']}"
+            marechal_morto = derrotado_object.marechal['nome']
+            derrotado_object.operacao_marechal = False
+            clone_tropas_ativas = self.tropas_ativas[:]
+
+            for tropa_ativa in clone_tropas_ativas:
+                if tropa_ativa.operacao_marechal and tropa_ativa != vencedor_object:
+                    if tropa_ativa.operacao_marechal["oponente"] == exercito_e_marechal_morto:
+                        console.print(f"           [yellow]Os planos de {tropa_ativa.nome} para neutralizar {marechal_morto} foram frustrados![/yellow]")
+                        sleep(2)
+                        console.print(f"           [underline italic bold red1 on white] //{tropa_ativa.operacao_marechal["nome"].upper()} ABORTADA.// [/underline italic bold red1 on white]")
+                        sleep(2)
+                        tropa_ativa.operacao_marechal = False
+                    
+                elif tropa_ativa.operacao_marechal and tropa_ativa == vencedor_object:
+                    if tropa_ativa.operacao_marechal["oponente"] == exercito_e_marechal_morto:
+                        console.print(f"           [yellow]Os planos de {tropa_ativa.nome} para neutralizar {marechal_morto} foram concluídos ao neutralizar o exército inimigo![/yellow]")
+                        sleep(2)
+                        console.print(f"           [underline italic bold cyan on white] //{tropa_ativa.operacao_marechal["nome"].upper()} ARQUIVADA...// [/underline italic bold cyan on white]")
+                        sleep(2)
+                        tropa_ativa.operacao_marechal = False
 
 
-    def calcular_conclusao(self, eventos):
+
+    def calcular_conclusao(self, eventos, tipo=None):
         from time import sleep
         from numpy.random import choice, randint
         from math import ceil
@@ -1732,32 +1815,25 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
             poder1 = randint(1, 100)
             poder2 = randint(1, 100)
 
-            if poder1 == poder2:
-                continue
+            if poder1 != poder2:
+                break
 
-            territorio = randint(5, 10)
+        territorio = randint(5, 10)
+    
+        marechal_1 = evento.a.marechal
+        marechal_2 = evento.a.inimigo.marechal
 
-            marechal_1 = evento.a.marechal
-            marechal_2 = evento.a.inimigo.marechal
+        if poder1 > poder2:
+            self.poder_do_round = ceil((poder1 - poder2) / 10)
+            resultado = "positivo"
 
-            if poder1 > poder2:
-                self.poder_do_round = ceil((poder1 - poder2) / 10)
-
-                resultado = "positivo"
-
-                if not evento.a.placar_seguido['primeira']:
-                    evento.a.placar_seguido['primeira'] = True
-                    evento.a.placar_seguido['streak'] = 1
-                else:
-                    evento.a.placar_seguido['streak'] += 1
-                
-                if evento.a.inimigo.placar_seguido['primeira']:
-                    evento.a.inimigo.placar_seguido['primeira'] = False
-                    evento.a.inimigo.placar_seguido['streak'] = 1
-                else:
-                    evento.a.inimigo.placar_seguido['streak'] += 1
-
-                match marechal_1['perfil']:
+            if not evento.a.placar_seguido['primeira']:
+                evento.a.placar_seguido['primeira'] = True
+                evento.a.placar_seguido['streak'] = 1
+            else:
+                evento.a.placar_seguido['streak'] += 1
+            
+            match marechal_1['perfil']:
                     case 'Agressivo':
                         self.poder_do_round *= 2
                     case 'Cauteloso':
@@ -1766,7 +1842,7 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
                         if poder1 - poder2 >= 48:
                             self.poder_do_round *= 2
                         elif poder1 - poder2 <= 15:
-                            self.poder_do_round = ceil(self.poder_do_round / 2)
+                            self.poder_do_round = 0
                     case 'Estrategista':
                         poder_total_1 = evento.a.calcular_poder_total()
                         poder_total_2 = evento.a.inimigo.calcular_poder_total()
@@ -1782,6 +1858,13 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
                             bonus = 0.5
 
                             self.poder_do_round = ceil(self.poder_do_round * (1 + multiplicador * bonus))
+            
+            if tipo != "single":
+                if evento.a.inimigo.placar_seguido['primeira']:
+                    evento.a.inimigo.placar_seguido['primeira'] = False
+                    evento.a.inimigo.placar_seguido['streak'] = 1
+                else:
+                    evento.a.inimigo.placar_seguido['streak'] += 1
 
                 match marechal_2['perfil']:
                     case 'Equilibrado':
@@ -1807,25 +1890,19 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
 
                             self.poder_do_round = ceil(self.poder_do_round * (1 + multiplicador * bonus))
                 
-                self.poder_do_round += evento.a.poder
+            self.poder_do_round += evento.a.poder
 
+        else:
+            self.poder_do_round = ceil((poder2 - poder1) / 10)
+            resultado = "negativo"
+
+            if evento.a.placar_seguido['primeira']:
+                evento.a.placar_seguido['primeira'] = False
+                evento.a.placar_seguido['streak'] = 1
             else:
-                self.poder_do_round = ceil((poder2 - poder1) / 10) + evento.a.inimigo.poder
-                resultado = "negativo"
-
-                if evento.a.placar_seguido['primeira']:
-                    evento.a.placar_seguido['primeira'] = False
-                    evento.a.placar_seguido['streak'] = 1
-                else:
-                    evento.a.placar_seguido['streak'] += 1
-
-                if not evento.a.inimigo.placar_seguido['primeira']:
-                    evento.a.inimigo.placar_seguido['primeira'] = True
-                    evento.a.inimigo.placar_seguido['streak'] = 1
-                else:
-                    evento.a.inimigo.placar_seguido['streak'] += 1
-                
-                match marechal_1['perfil']:
+                evento.a.placar_seguido['streak'] += 1
+            
+            match marechal_1['perfil']:
                     case 'Agressivo':
                         self.poder_do_round *= 2
                     case 'Cauteloso':
@@ -1845,6 +1922,14 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
                             bonus = 0.5
 
                             self.poder_do_round = ceil(self.poder_do_round * (1 + multiplicador * bonus))
+            
+            if tipo != "single":
+
+                if not evento.a.inimigo.placar_seguido['primeira']:
+                    evento.a.inimigo.placar_seguido['primeira'] = True
+                    evento.a.inimigo.placar_seguido['streak'] = 1
+                else:
+                    evento.a.inimigo.placar_seguido['streak'] += 1
                 
                 match marechal_2['perfil']:
                     case 'Equilibrado':
@@ -1857,7 +1942,7 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
                         if poder2 - poder1 >= 48:
                             self.poder_do_round *= 2
                         elif poder2 - poder1 <= 15:
-                            self.poder_do_round = ceil(self.poder_do_round / 2)
+                            self.poder_do_round = 0
                     case 'Estrategista':
                         poder_total_1 = evento.a.calcular_poder_total()
                         poder_total_2 = evento.a.inimigo.calcular_poder_total()
@@ -1874,9 +1959,7 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
 
                             self.poder_do_round = ceil(self.poder_do_round * (1 + multiplicador * bonus))
                 
-                self.poder_do_round += evento.a.inimigo.poder
-            
-            break
+            self.poder_do_round += evento.a.inimigo.poder
 
         console.print(f"[yellow][{self.tempo.horario}][/yellow] {evento.nome}")
         sleep(1)
@@ -1902,18 +1985,21 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
 
                     console.print(f'           [#ff6161]{evento.negativo}[/#ff6161]')
                     evento.efeito_neg()
-                    evento.a.territorio -= territorio
-                    evento.a.inimigo.territorio += territorio
+                    if tipo != "single":
+                        evento.a.territorio -= territorio
+                        evento.a.inimigo.territorio += territorio
                 else:
                     console.print(f'           [#00ff00]{evento.positivo}[/#00ff00]')
                     evento.efeito_pos()
-                    evento.a.territorio += territorio
-                    evento.a.inimigo.territorio -= territorio
+                    if tipo != "single":
+                        evento.a.territorio += territorio
+                        evento.a.inimigo.territorio -= territorio
             else:
                 console.print(f'           [#00ff00]{evento.positivo}[/#00ff00]')
                 evento.efeito_pos()
-                evento.a.territorio += territorio
-                evento.a.inimigo.territorio -= territorio
+                if tipo != "single":
+                    evento.a.territorio += territorio
+                    evento.a.inimigo.territorio -= territorio
 
         else:
             if marechal_1['perfil'] == 'Instável':
@@ -1936,18 +2022,21 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
                     sleep(1)
                     console.print(f'           [#00ff00]{evento.positivo}[/#00ff00]')
                     evento.efeito_pos()
-                    evento.a.territorio += territorio
-                    evento.a.inimigo.territorio -= territorio
+                    if tipo != "single":
+                        evento.a.territorio += territorio
+                        evento.a.inimigo.territorio -= territorio
                 else:
                     console.print(f'           [#ff6161]{evento.negativo}[/#ff6161]')
                     evento.efeito_neg()
-                    evento.a.territorio -= territorio
-                    evento.a.inimigo.territorio += territorio
+                    if tipo != "single":
+                        evento.a.territorio -= territorio
+                        evento.a.inimigo.territorio += territorio
             else:
                 console.print(f'           [#ff6161]{evento.negativo}[/#ff6161]')
                 evento.efeito_neg()
-                evento.a.territorio -= territorio
-                evento.a.inimigo.territorio += territorio
+                if tipo != "single":
+                    evento.a.territorio -= territorio
+                    evento.a.inimigo.territorio += territorio
         
         self.calcular_flow()
     
@@ -1963,7 +2052,7 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
         table.add_column("Exército", justify="center")
         table.add_column("Marechal", justify="center")
         table.add_column("Perfil", justify="center")
-        table.add_column("Poder", justify="center", style="red")
+        table.add_column("Poder", justify="center", style="red1")
         table.add_column("Território", justify="center", style="green")
         table.add_column("Flow", justify="center", style="pink1")
         table.add_column("Força", justify="center", style="orange1")
@@ -1972,9 +2061,20 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
         table.add_column("Moral", justify="center", style="yellow")
         table.add_column("Estratégia", justify="center", style="violet")
 
-        for exercito in self.exercitos:
+        poderes = {}
 
+        for exercito in self.tropas_ativas:
+            poderes[exercito] = exercito.calcular_poder_total()
+        
+        poderes_ordenados = dict(sorted(poderes.items(), key=lambda item: item[1], reverse=True))
+
+        for exercito in poderes_ordenados.keys():
             table.add_row(f"{exercito.nome}", f"{exercito.marechal['nome']}", f"{exercito.marechal['perfil_estilizado']}", f"{exercito.poder}", f"{exercito.territorio}", f"{exercito.flow}", f"{exercito.forca}", f"{exercito.tecnologia}", f"{exercito.suprimentos}", f"{exercito.moral}", f"{exercito.estrategia}")
+
+        for exercito in self.exercitos:
+            if exercito not in self.tropas_ativas:
+                table.add_row(f"[strike]{exercito.nome}[/strike]", f"[strike]{exercito.marechal['nome']}[/strike]", f"[strike]{exercito.marechal['perfil_estilizado']}[/strike]", f"[strike]{exercito.poder}[/strike]", f"[strike]{exercito.territorio}[/strike]", f"[strike]{exercito.flow}[/strike]", f"[strike]{exercito.forca}[/strike]", f"[strike]{exercito.tecnologia}[/strike]", f"[strike]{exercito.suprimentos}[/strike]", f"[strike]{exercito.moral}[/strike]", f"[strike]{exercito.estrategia}[/strike]")
+
 
         console.print(table)
         print()
@@ -1983,7 +2083,7 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
     def concluir_dia(self):
         from random import uniform
 
-        for tropa in self.exercitos:
+        for tropa in self.tropas_ativas:
             tropa.resumo["pib"] -= round(uniform(0.01, 0.1), 2)
             tropa.resumo["inflacao"] += round(uniform(0.01, 0.1), 2)
 
@@ -1997,13 +2097,13 @@ Após {self.tempo.dia} dias de guerra, o mundo respira aliviado com o fim oficia
 
         poder_somado = 0
 
-        for exercito in self.exercitos:
+        for exercito in self.tropas_ativas:
 
             exercito.poder_total = exercito.calcular_poder_total()
 
             poder_somado += exercito.poder_total
         
-        for exercito in self.exercitos:
+        for exercito in self.tropas_ativas:
 
             porcentagem = exercito.poder_total / poder_somado
 

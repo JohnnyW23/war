@@ -1,7 +1,5 @@
-from random import choices, randint, uniform
 from time import sleep
 from rich.console import Console
-
 from modules.exercito import Exercito
 from modules.guerra import Guerra
 from modules.midia import Midia
@@ -9,15 +7,17 @@ from modules.midia import Midia
 
 tropa1 = Exercito("Saint Louis", "blink bold #ff383e underline", "Resistência Popular", "RSP")
 tropa2 = Exercito("Viena Empire", "blink bold #00d0ff underline", "Voz Patriótica", "VPT")
+tropa3 = Exercito("República Ashbury", "blink bold #00ff00 underline", "Som da Liberdade", "SDL")
+tropa4 = Exercito("Alta Galileia", "blink bold pink1 underline", "Sanctum Dominium", "SDM")
 
-tropas = [tropa1, tropa2]
+tropas = [tropa1, tropa2, tropa3, tropa4]
 
 for tropa in tropas:
     for inimigo in tropas:
         if tropa != inimigo:
-            tropa.inimigo = inimigo
+            tropa.inimigos.append(inimigo)
 
-midia = Midia(tropas)
+midia = Midia()
 
 guerra = Guerra(tropas)
 
@@ -30,5 +30,7 @@ while guerra.ativa:
 
     for tropa in guerra.tropas_ativas:
 
-        if guerra.tempo.tick(tropa, midia) or not guerra.ativa:
+        guerra.tempo.tick(tropa, midia)
+        
+        if not guerra.ativa:
             break

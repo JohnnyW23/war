@@ -1,6 +1,5 @@
 class Midia:
-    def __init__(self, tropas):
-        self.tropas = tropas
+    def __init__(self):
 
         self.resumo = {
             "mortos": 145
@@ -324,12 +323,12 @@ class Midia:
         ]
 
 
-    def gerar_noticia(self):
+    def gerar_noticia(self, tropas):
         from random import choice, randint
 
         canal = choice(self.canais)
 
-        exercito = choice(self.tropas)
+        exercito = choice(tropas)
 
         if canal['sigla'] != "POLITICO":
             sigla = canal["sigla"]
@@ -434,9 +433,238 @@ class Midia:
         return f"[{sigla}] {noticia_final}"
 
 
-    def boletim_semanal(self):
-        poder_total_1 = self.tropa1.forca + self.tropa1.tecnologia + self.tropa1.suprimentos + self.tropa1.moral + self.tropa1.estrategia
-        poder_total_2 = self.tropa1.forca + self.tropa1.tecnologia + self.tropa1.suprimentos + self.tropa1.moral + self.tropa1.estrategia
+    def boletim_semanal(self, tropas):
+        import random
+        from rich.console import Console
+        from time import sleep
 
-        # continua após a DUIMP...........
+        console = Console()
+
+        console.print("\n[yellow]========================== BOLETIM SEMANAL DA GUERRA ==========================[/yellow]\n")
+
+        canais = ["Global News", "Virtua Agency", "Observer", "World Report", "Daily Insight", "News Network", "International Watch", "Global View", "World Scope", "Global Eye", "Global Times", "World Focus", "Global Perspective", "World Monitor", "Global Update", "World Analysis", "Global Review", "World Reportage", "Global Dispatch", "World Bulletin"]
+
+        canal = random.choice(canais)
+
+        top_tropas = {}
+
+        for tropa in tropas:
+            top_tropas[tropa] = {
+                "poder_total": tropa.calcular_poder_total(),
+                "poder": tropa.poder,
+                "forca": tropa.forca,
+                "tecnologia": tropa.tecnologia,
+                "suprimentos": tropa.suprimentos,
+                "moral": tropa.moral,
+                "estrategia": tropa.estrategia
+            }
+
+        # ranking geral da guerra
+        ranking_poder_total = sorted(top_tropas.items(), key=lambda x: x[1]["poder_total"], reverse=True)
+        ranking_poder = sorted(top_tropas.items(), key=lambda x: x[1]["poder"], reverse=True)
+        ranking_forca = sorted(top_tropas.items(), key=lambda x: x[1]["forca"], reverse=True)
+        ranking_tecnologia = sorted(top_tropas.items(), key=lambda x: x[1]["tecnologia"], reverse=True)
+        ranking_suprimentos = sorted(top_tropas.items(), key=lambda x: x[1]["suprimentos"], reverse=True)
+        ranking_moral = sorted(top_tropas.items(), key=lambda x: x[1]["moral"], reverse=True)
+        ranking_estrategia = sorted(top_tropas.items(), key=lambda x: x[1]["estrategia"], reverse=True)
+
+
+        manchetes = [
+            f"O conflito continua intenso entre os exércitos envolvidos, sem previsão clara de conclusão. Confira os detalhes mais recentes.",
+            f"Especialistas afirmam que a guerra segue sem resolução clara. Mortos aumentam a cada dia. Veja os dados atualizados.",
+            f"A guerra entra em mais uma semana de combates. Confira as informações mais recentes sobre o conflito.",
+            f"Combates continuam em múltiplas frentes do conflito. Veja os detalhes mais recentes sobre a situação no campo de batalha.",
+            f"A guerra segue sem sinais de trégua. Confira os dados mais recentes sobre o conflito e suas consequências."
+        ]
+
+        console.print(f"[yellow][12:00:00] [{canal}] {random.choice(manchetes)}[/yellow]")
+        sleep(3)
+
+        vantagem = [
+            f"{ranking_poder_total[0][0].nome} parece ter melhor desempenho geral até o momento.",
+            f"Observadores apontam {ranking_poder_total[0][0].nome} como o lado mais estável da guerra.",
+            f"Especialistas destacam {ranking_poder_total[0][0].nome} como o mais preparado para enfrentar os desafios do conflito.",
+            f"{ranking_poder_total[0][0].nome} mantém vantagem em diversos aspectos do confronto, segundo analistas militares.",
+            f"Dados indicam que {ranking_poder_total[0][0].nome} tem melhor desempenho geral, mas a guerra ainda é imprevisível.",
+            f"{ranking_poder_total[0][0].nome} lidera o ranking geral, mas especialistas alertam que a situação pode mudar rapidamente.",
+            f"{ranking_poder_total[0][0].nome} é apontado como o lado mais forte do conflito, mas analistas destacam que a guerra é dinâmica e pode surpreender.",
+            f"{ranking_poder_total[0][0].nome} tem melhor desempenho geral, mas especialistas afirmam que a guerra é imprevisível e pode mudar a qualquer momento."
+        ]
+
+        dificuldade = [
+            f"{ranking_poder_total[-1][0].nome} enfrenta maiores dificuldades no conflito.",
+            f"{ranking_poder_total[-1][0].nome} parece pressionado pelas condições atuais da guerra.",
+            f"As forças de {ranking_poder_total[-1][0].nome} enfrentam desafios crescentes.",
+            f"{ranking_poder_total[-1][0].nome} tem desempenho inferior em diversos aspectos do confronto, segundo analistas militares.",
+            f"{ranking_poder_total[-1][0].nome} apresenta desafios significativos, mas especialistas alertam que o cenário pode mudar repentinamente.",
+            f"{ranking_poder_total[-1][0].nome} é apontado como o lado mais fraco do conflito, mas analistas destacam que a guerra é dinâmica e pode surpreender."
+        ]
+
+        frases_forca_maior = [
+            f"{ranking_forca[0][0].nome} mantém uma força militar robusta, segundo relatórios recentes.",
+            f"Observadores apontam que as forças de {ranking_forca[0][0].nome} permanecem fortes, apesar dos desafios do conflito.",
+            f"Especialistas destacam a grande presença militar de {ranking_forca[0][0].nome} no campo de batalha.",
+            f"Relatórios indicam que {ranking_forca[0][0].nome} se destaca pela maior força de suas tropas."
+        ]
+
+        frases_forca_menor = [
+            f"{ranking_forca[-1][0].nome} enfrenta uma força militar severamente reduzida, segundo relatórios recentes.",
+            f"Observadores apontam que as forças de {ranking_forca[-1][0].nome} têm capacidade militar preocupantemente baixa.",
+            f"Especialistas destacam as perdas significativas nas forças armadas de {ranking_forca[-1][0].nome}.",
+            f"Relatórios apontam que {ranking_forca[-1][0].nome} se destaca pela menor força de suas tropas."
+        ]
+
+        frases_poder_maior = []
+
+        if ranking_poder[0][0].poder != ranking_poder[1][0].poder:
+
+            frases_poder_maior.extend([
+                f"{ranking_poder[0][0].nome} é o exército que mais possui conquistas significativas no conflito, segundo dados recentes.",
+                f"Observadores apontam que {ranking_poder[0][0].nome} tem o maior número de avanços no campo de batalha.",
+                f"Especialistas destacam que {ranking_poder[0][0].nome} é o lado que mais tem conquistado objetivos estratégicos.",
+                f"Relatórios indicam que {ranking_poder[0][0].nome} se destaca pelo maior poder de conquista no conflito."
+            ])
+
+        frases_tecnologia_maior = [
+            f"{ranking_tecnologia[0][0].nome} se destaca pelo uso significativo de tecnologia militar, segundo analistas.",
+            f"Observadores apontam que as forças de {ranking_tecnologia[0][0].nome} operam com os equipamentos militares mais avançados.",
+            f"Especialistas destacam a vantagem tecnológica visível de {ranking_tecnologia[0][0].nome} no conflito.",
+            f"Relatórios indicam que {ranking_tecnologia[0][0].nome} tem uma clara superioridade tecnológica em relação aos adversários."
+        ]
+
+        frases_tecnologia_menor = [
+            f"{ranking_tecnologia[-1][0].nome} enfrenta dificuldades com equipamentos militares defasados, segundo analistas.",
+            f"Observadores apontam que as forças de {ranking_tecnologia[-1][0].nome} têm dificuldades tecnológicas nas operações.",
+            f"Especialistas destacam as limitações tecnológicas de {ranking_tecnologia[-1][0].nome} no campo de batalha.",
+            f"Relatórios indicam que {ranking_tecnologia[-1][0].nome} tem uma clara desvantagem tecnológica em relação aos adversários."
+        ]
+
+        frases_suprimentos_maior = [
+            f"{ranking_suprimentos[0][0].nome} mantém linhas de suprimento mais estáveis, segundo relatórios recentes.",
+            f"Observadores apontam que a logística militar de {ranking_suprimentos[0][0].nome} é bem organizada e mais preparada.",
+            f"Especialistas destacam o fluxo constante de suprimentos para as tropas de {ranking_suprimentos[0][0].nome}.",
+            f"Relatórios indicam que {ranking_suprimentos[0][0].nome} se destaca pela eficiência em manter suas tropas abastecidas."
+        ]
+
+        frases_suprimentos_menor = [
+            f"{ranking_suprimentos[-1][0].nome} enfrenta problemas sérios de abastecimento, segundo relatórios recentes.",
+            f"Observadores apontam que as forças de {ranking_suprimentos[-1][0].nome} sofrem com a escassez de suprimentos no campo de batalha.",
+            f"Especialistas destacam as linhas logísticas pressionadas de {ranking_suprimentos[-1][0].nome}.",
+            f"Relatórios indicam que {ranking_suprimentos[-1][0].nome} se destaca pela ineficiência em manter suas tropas abastecidas."
+        ]
+
+        frases_moral_maior = [
+            f"{ranking_moral[0][0].nome} mantém um alto moral entre as tropas, segundo observadores.",
+            f"Especialistas destacam o espírito de combate elevado das forças de {ranking_moral[0][0].nome}.",
+            f"Relatórios indicam que a confiança entre as fileiras de {ranking_moral[0][0].nome} é significativa.",
+            f"Observadores apontam que o moral das tropas de {ranking_moral[0][0].nome} é um dos pontos fortes do conflito."
+        ]
+
+        frases_moral_menor = [
+            f"{ranking_moral[-1][0].nome} enfrenta uma queda significativa no moral das tropas, segundo observadores.",
+            f"Especialistas destacam o desgaste psicológico nas forças armadas de {ranking_moral[-1][0].nome}.",
+            f"Relatórios indicam sinais de desmotivação entre os soldados de {ranking_moral[-1][0].nome}.",
+            f"Observadores apontam que o moral das tropas de {ranking_moral[-1][0].nome} é um dos pontos mais preocupantes do conflito."
+        ]
+
+        frases_estrategia_maior = [
+            f"{ranking_estrategia[0][0].nome} se destaca pela coordenação estratégica eficiente, segundo analistas.",
+            f"Observadores apontam que o planejamento militar de {ranking_estrategia[0][0].nome} é consistente e bem executado.",
+            f"Especialistas destacam os movimentos táticos bem executados por {ranking_estrategia[0][0].nome}.",
+            f"Relatórios indicam que {ranking_estrategia[0][0].nome} tem uma clara vantagem estratégica em relação aos adversários."
+        ]
+
+        frases_estrategia_menor = [
+            f"{ranking_estrategia[-1][0].nome} enfrenta problemas de coordenação militar, segundo analistas.",
+            f"Observadores apontam que as estratégias de {ranking_estrategia[-1][0].nome} são inconsistentes no campo de batalha.",
+            f"Especialistas destacam as dificuldades no planejamento das operações de {ranking_estrategia[-1][0].nome}.",
+            f"Relatórios indicam que {ranking_estrategia[-1][0].nome} tem uma clara desvantagem estratégica em relação aos adversários."
+        ]
+
+        frases_perigo_forca = []
+        frases_perigo_tecnologia = []
+        frases_perigo_suprimentos = []
+        frases_perigo_moral = []
+        frases_perigo_estrategia = []
+
+        if ranking_forca[-1][1]["forca"] <= 20:
+            frases_perigo_forca.extend([
+                f"{ranking_forca[-1][0].nome} enfrenta um perigo iminente devido à força militar severamente reduzida, tendo grandes riscos de derrota.",
+                f"Observadores alertam que a capacidade militar de {ranking_forca[-1][0].nome} é preocupantemente baixa, colocando o lado em risco.",
+                f"Especialistas destacam que as perdas significativas nas forças armadas de {ranking_forca[-1][0].nome} podem levar a um colapso total.",
+                f"Relatórios indicam que {ranking_forca[-1][0].nome} está em uma situação crítica devido à menor força de suas tropas."
+            ])
         
+        if ranking_tecnologia[-1][1]["tecnologia"] <= 20:
+            frases_perigo_tecnologia.extend([
+                f"{ranking_tecnologia[-1][0].nome} enfrenta um perigo iminente devido à tecnologia militar defasada, tendo grandes riscos de derrota.",
+                f"Observadores alertam que as dificuldades tecnológicas de {ranking_tecnologia[-1][0].nome} nas operações colocam o lado em risco.",
+                f"Especialistas destacam que as limitações tecnológicas de {ranking_tecnologia[-1][0].nome} no campo de batalha podem levar a um colapso total.",
+                f"Relatórios indicam que {ranking_tecnologia[-1][0].nome} está em uma situação crítica devido à clara desvantagem tecnológica em relação aos adversários."
+            ])
+        
+        if ranking_suprimentos[-1][1]["suprimentos"] <= 20:
+            frases_perigo_suprimentos.extend([
+                f"{ranking_suprimentos[-1][0].nome} enfrenta um perigo iminente devido aos problemas sérios de abastecimento, tendo grandes riscos de derrota.",
+                f"Observadores alertam que a escassez de suprimentos no campo de batalha para {ranking_suprimentos[-1][0].nome} coloca o lado em risco.",
+                f"Especialistas destacam que as linhas logísticas pressionadas de {ranking_suprimentos[-1][0].nome} podem levar a um colapso total.",
+                f"Relatórios indicam que {ranking_suprimentos[-1][0].nome} está em uma situação crítica devido à ineficiência em manter suas tropas abastecidas."
+            ])
+        
+        if ranking_moral[-1][1]["moral"] <= 20:
+            frases_perigo_moral.extend([
+                f"{ranking_moral[-1][0].nome} enfrenta um perigo iminente devido à queda significativa no moral das tropas, tendo grandes riscos de derrota.",
+                f"Observadores alertam que o desgaste psicológico nas forças armadas de {ranking_moral[-1][0].nome} coloca o lado em risco.",
+                f"Especialistas destacam que os sinais de desmotivação entre os soldados de {ranking_moral[-1][0].nome} podem levar a um colapso total.",
+                f"Relatórios indicam que {ranking_moral[-1][0].nome} está em uma situação crítica devido ao moral das tropas ser um dos pontos mais preocupantes do conflito."
+            ])
+        
+        if ranking_estrategia[-1][1]["estrategia"] <= 20:
+            frases_perigo_estrategia.extend([
+                f"{ranking_estrategia[-1][0].nome} enfrenta um perigo iminente devido aos problemas de coordenação militar, tendo grandes riscos de derrota.",
+                f"Observadores alertam que as estratégias inconsistentes no campo de batalha para {ranking_estrategia[-1][0].nome} colocam o lado em risco.",
+                f"Especialistas destacam que as dificuldades no planejamento das operações de {ranking_estrategia[-1][0].nome} podem levar a um colapso total.",
+                f"Relatórios indicam que {ranking_estrategia[-1][0].nome} está em uma situação crítica devido à clara desvantagem estratégica em relação aos adversários."
+            ])
+        
+        todas_as_frases = [
+            vantagem, dificuldade, frases_forca_maior, frases_forca_menor, frases_poder_maior, frases_tecnologia_maior, frases_tecnologia_menor,
+            frases_suprimentos_maior, frases_suprimentos_menor, frases_moral_maior, frases_moral_menor, frases_estrategia_maior, frases_estrategia_menor,
+            frases_perigo_forca, frases_perigo_tecnologia, frases_perigo_suprimentos, frases_perigo_moral, frases_perigo_estrategia
+        ]
+
+        intervalo = 3
+
+        for frases in todas_as_frases:
+
+            if len(frases) > 0:            
+                minuto = random.randint(intervalo - 2, intervalo)
+                segundos = random.randint(0, 59)
+
+                if minuto < 10:
+                    minuto = f"0{minuto}"
+                
+                if segundos < 10:
+                    segundos = f"0{segundos}"
+                
+                console.print(f"[yellow][12:{minuto}:{segundos}] [{canal}] {random.choice(frases)}[/yellow]")
+                sleep(3)
+            
+            intervalo += 3
+
+        comentarios = [
+            "Especialistas afirmam que o conflito ainda pode mudar rapidamente.",
+            "Analistas destacam a imprevisibilidade da guerra.",
+            "Observadores internacionais acompanham a situação com cautela.",
+            "Nenhum dos lados da guerraparece disposto a recuar."
+        ]
+
+        minuto = random.randint(intervalo, 59)
+        segundos = random.randint(0, 59)
+        
+        if segundos < 10:
+            segundos = f"0{segundos}"
+
+        console.print(f"[yellow][12:{minuto}:{segundos}] [{canal}] {random.choice(comentarios)}[/yellow]")
+        console.print("\n[yellow]===============================================================================[/yellow]\n")
+        sleep(3)

@@ -31,7 +31,10 @@ class Tempo:
                 self.guerra.tabela_guerra()
                 sleep(1)
             
-            return self.checar_evento(tropa, midia)
+            resultado = self.checar_evento(tropa, midia)
+
+            if resultado:
+                break
     
 
     def formatar_horario(self):
@@ -49,11 +52,15 @@ class Tempo:
 
     def checar_evento(self, tropa, midia):
         # aumenta chance progressivamente
-        from random import random, choices, randint
+        from random import random, choices, randint, choice
         from rich.console import Console
         from time import sleep
 
         self.chance_evento += self.incremento
+
+        if self.dia % 7 == 0 and self.hora == 12:
+            midia.boletim_semanal(self.guerra.tropas_ativas)
+            return True
 
         for exercito in self.guerra.tropas_ativas:
             if exercito.operacao_marechal:
@@ -61,11 +68,13 @@ class Tempo:
                     self.guerra.executar_operacao_marechal(exercito)
                     return True
 
-        dado1 = randint(1, 130)
-        dado2 = randint(1, 130)
+        dado1 = randint(1, 160)
+        dado2 = randint(1, 160)
 
         if dado1 == dado2:
             self.atualizar_horario()
+            tropa.inimigo = choice(tropa.inimigos)
+
             self.guerra.evento_especial(tropa)
             midia.resumo["mortos"] += randint(20, 40)
             return True
@@ -76,6 +85,9 @@ class Tempo:
             self.formatar_horario()
             self.atualizar_horario()
 
+            tropa.inimigo = choice(tropa.inimigos)
+            tropa.inimigo.inimigo = tropa
+
             func = choices(
                 [e for e, _ in self.guerra.eventos],
                 weights=[p for _, p in self.guerra.eventos],
@@ -85,7 +97,7 @@ class Tempo:
 
             midia.resumo["mortos"] += randint(5, 20)
 
-            for exercito in self.guerra.exercitos:
+            for exercito in [tropa, tropa.inimigo]:
                 self.guerra.verificar_resultado(exercito)
             
             return True
@@ -93,7 +105,8 @@ class Tempo:
         if random() <= 0.1 and self.dia > 1:
             self.formatar_horario()
             self.atualizar_horario()
-            noticia = midia.gerar_noticia()
+            tropa.inimigo = choice(tropa.inimigos)
+            noticia = midia.gerar_noticia(self.guerra.tropas_ativas)
             Console().print(f"[yellow][{self.horario}] [italic]{noticia}[/italic][/yellow]")
             sleep(1)
         
@@ -123,16 +136,4 @@ class Tempo:
         emoji = climas[clima_escolhido][0]
         
         return [clima_escolhido.capitalize(), emoji]
-
-
-    def descrever_marechal(self, novo=False):
-        from time import sleep
-        from rich.console import Console
-
-        console = Console()
-
-        if novo:
-            console.print(f"[italic]           Um novo marechal para {self.nome} foi escolhido. Ele se chama {self.marechal['nome']}, e tem um perfil {self.marechal['perfil_estilizado']}.[/italic]")
-        else:
-            console.print(f"[italic]O marechal de {self.nome} se chama {self.marechal['nome']}, que tem um perfil {self.marechal['perfil_estilizado']}.[/italic]")
-        sleep(2)
+    

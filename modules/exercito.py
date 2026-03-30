@@ -3,15 +3,18 @@ class Exercito:
         from random import uniform
 
         self.nome = f"[{cor}]{nome}[/{cor}]"
+        self.nome_colorido = f"[{cor}]{nome}[/{cor}]"
+        self.nome_derrotado = f"[grey30]{nome}[/grey30]"
         self.poder = 1
-        self.flow = 50
+        self.flow = 0
         self.territorio = 300
-        self.forca = 500
-        self.tecnologia = 500
-        self.suprimentos = 500
-        self.moral = 500
-        self.estrategia = 500
+        self.forca = 400
+        self.tecnologia = 200
+        self.suprimentos = 200
+        self.moral = 200
+        self.estrategia = 200
         self.marechal = self.escolher_marechal()
+        self.inimigos = []
 
         self.canal_nome = canal_nome
         self.canal_sigla = canal_sigla
@@ -40,7 +43,17 @@ class Exercito:
         
         marechais = [name['name'] for name in names if name['gender'] == 'male' or name['gender'] == 'unisex']
 
-        perfis = [["Agressivo", "orange1"], ["Cauteloso", "bright_blue"], ["Equilibrado", "bright_black"], ["Oportunista", "gold1"], ["Estrategista", "blue_violet"], ["Sanguinário", "red1"], ["Político", "chartreuse1"], ["Instável", "dark_red"]]
+        perfis = [
+            ["Agressivo", "orange1"],
+            ["Cauteloso", "bright_blue"],
+            ["Equilibrado", "bright_black"],
+            ["Oportunista", "gold1"],
+            ["Arrogante", "magenta1"],
+            ["Estrategista", "blue_violet"],
+            ["Sanguinário", "red1"],
+            ["Político", "chartreuse1"],
+            ["Instável", "dark_red"]
+        ]
 
         """
         equilibrado: nada acontece
@@ -64,7 +77,20 @@ class Exercito:
             "nome": f"[bold underline white]{marechal}[/bold underline white]",
             "perfil_estilizado": perfil_estilizado,
             "perfil": perfil
-            }
+        }
+
+
+    def descrever_marechal(self, novo=False):
+        from time import sleep
+        from rich.console import Console
+
+        console = Console()
+
+        if novo:
+            console.print(f"[italic]           Um novo marechal para {self.nome} foi escolhido. Ele se chama {self.marechal['nome']}, e tem um perfil {self.marechal['perfil_estilizado']}.[/italic]")
+        else:
+            console.print(f"[italic]O marechal de {self.nome} se chama {self.marechal['nome']}, que tem um perfil {self.marechal['perfil_estilizado']}.[/italic]")
+        sleep(2)
 
 
     def calcular_poder_total(self):
