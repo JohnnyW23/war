@@ -1602,7 +1602,7 @@ class Guerra:
                     if inimigo.operacao_marechal["oponente"] == oponente_morto:
                         console.print(f"           [yellow]Os planos de {inimigo.nome} para neutralizar {marechal_morto} foram frustrados![/yellow]")
                         sleep(2)
-                        console.print(f"           [underline italic bold red1 on white] //{inimigo.operacao_marechal["nome"].upper()} ABORTADA.// [/underline italic bold red1 on white]")
+                        console.print(f"           [underline italic bold red1 on white] //{inimigo.operacao_marechal['nome'].upper()} ABORTADA.// [/underline italic bold red1 on white]")
                         sleep(2)
                         inimigo.operacao_marechal = False
 
@@ -1790,7 +1790,7 @@ A cobertura continua com o conflito entre {oponentes}.
                     if tropa_ativa.operacao_marechal["oponente"] == exercito_e_marechal_morto:
                         console.print(f"           [yellow]Os planos de {tropa_ativa.nome} para neutralizar {marechal_morto} foram frustrados![/yellow]")
                         sleep(2)
-                        console.print(f"           [underline italic bold red1 on white] //{tropa_ativa.operacao_marechal["nome"].upper()} ABORTADA.// [/underline italic bold red1 on white]")
+                        console.print(f"           [underline italic bold red1 on white] //{tropa_ativa.operacao_marechal['nome'].upper()} ABORTADA.// [/underline italic bold red1 on white]")
                         sleep(2)
                         tropa_ativa.operacao_marechal = False
                     
@@ -1798,7 +1798,7 @@ A cobertura continua com o conflito entre {oponentes}.
                     if tropa_ativa.operacao_marechal["oponente"] == exercito_e_marechal_morto:
                         console.print(f"           [yellow]Os planos de {tropa_ativa.nome} para neutralizar {marechal_morto} foram concluídos ao neutralizar o exército inimigo![/yellow]")
                         sleep(2)
-                        console.print(f"           [underline italic bold cyan on white] //{tropa_ativa.operacao_marechal["nome"].upper()} ARQUIVADA...// [/underline italic bold cyan on white]")
+                        console.print(f"           [underline italic bold cyan on white] //{tropa_ativa.operacao_marechal['nome'].upper()} ARQUIVADA...// [/underline italic bold cyan on white]")
                         sleep(2)
                         tropa_ativa.operacao_marechal = False
 
@@ -2044,6 +2044,7 @@ A cobertura continua com o conflito entre {oponentes}.
         from rich.console import Console
         from rich.panel import Panel
         from rich.columns import Columns
+        from rich.align import Align
 
         console = Console()
 
@@ -2083,7 +2084,7 @@ LOCAIS DOMINADOS:
                 conteudo += f"{frase}\n"
 
             panels_dados.append(
-                Panel(conteudo, title=exercito.nome, style="white", expand=False)
+                Panel(conteudo, title=exercito.nome, style="white", width=45)
             )
         
         for exercito in self.exercitos:
@@ -2112,16 +2113,18 @@ LOCAIS DOMINADOS:
                     conteudo += f"{frase}\n"
 
                 panels_dados.append(
-                    Panel(conteudo, title=exercito.nome_derrotado, style="white", expand=False)
+                    Panel(conteudo, title=exercito.nome_derrotado, style="white", width=45)
                 )
 
-        dados_row = Columns(panels_dados, expand=False, equal=True, align="center")
+        dados_row = Columns(panels_dados, expand=False, equal=False)
 
         console.print(
             Panel.fit(
-                dados_row,
+                Align.center(dados_row), 
                 title=f"Dia {self.tempo.dia} // Clima: {self.tempo.clima[0]}",
-                padding=(1, 2)
+                style="white",
+                highlight=True,
+                width=200
             )
         )
 
