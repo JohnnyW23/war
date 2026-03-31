@@ -11,7 +11,7 @@ class Tempo:
 
         # controla chance crescente por ciclo
         self.chance_evento = 0.0  
-        self.incremento = 0.1  # 5% por tick
+        self.incremento = 0.15  # 15% por tick
     
 
     def atualizar_horario(self):
