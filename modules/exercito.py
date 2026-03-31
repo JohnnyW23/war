@@ -8,16 +8,18 @@ class Exercito:
         self.poder = 1
         self.flow = 0
         self.territorio = 300
-        self.forca = 400
-        self.tecnologia = 200
-        self.suprimentos = 200
-        self.moral = 200
-        self.estrategia = 200
+        self.forca = 20
+        self.tecnologia = 20
+        self.suprimentos = 20
+        self.moral = 20
+        self.estrategia = 20
         self.marechal = self.escolher_marechal()
         self.inimigos = []
 
         self.canal_nome = canal_nome
         self.canal_sigla = canal_sigla
+
+        self.locais = []
 
         self.resumo = {
             "pib": round(uniform(0.1, 1), 2),
@@ -72,11 +74,15 @@ class Exercito:
         cor = perfil_info[1]
         perfil = perfil_info[0]
         perfil_estilizado = f'[bold {cor}]{perfil}[/bold {cor}]'
+        nome_derrotado = f'[grey30]{marechal}[/grey30]'
+        perfil_derrotado = f'[grey30]{perfil}[/grey30]'
 
         return {
             "nome": f"[bold underline white]{marechal}[/bold underline white]",
             "perfil_estilizado": perfil_estilizado,
-            "perfil": perfil
+            "perfil": perfil,
+            "nome_derrotado": nome_derrotado,
+            "perfil_derrotado": perfil_derrotado
         }
 
 
@@ -95,3 +101,23 @@ class Exercito:
 
     def calcular_poder_total(self):
         return self.forca + self.tecnologia + self.suprimentos + self.moral + self.estrategia
+    
+
+    def gerar_locais(self):
+        from modules.local import gerar_local
+        from random import random
+
+        dado = random()
+
+        if dado < 0.6:
+            locais = 5
+        elif dado < 0.9:
+            locais = 6
+        else:
+            locais = 7
+
+        for _ in range(locais):
+            local = gerar_local()
+            self.locais.append(local)
+            self.locais = sorted(self.locais, key=lambda x: ["raro", "incomum", "comum"].index(x.raridade))
+

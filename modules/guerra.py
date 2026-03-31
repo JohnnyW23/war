@@ -2041,25 +2041,13 @@ A cobertura continua com o conflito entre {oponentes}.
         self.calcular_flow()
     
     def tabela_guerra(self):
-        from rich.table import Table
         from rich.console import Console
+        from rich.panel import Panel
+        from rich.columns import Columns
 
         console = Console()
 
         print()
-        table = Table(title=f"Dia {self.tempo.dia} // Clima: {self.tempo.clima[0]} {self.tempo.clima[1]}")
-
-        table.add_column("Exército", justify="center")
-        table.add_column("Marechal", justify="center")
-        table.add_column("Perfil", justify="center")
-        table.add_column("Poder", justify="center", style="red1")
-        table.add_column("Território", justify="center", style="green")
-        table.add_column("Flow", justify="center", style="pink1")
-        table.add_column("Força", justify="center", style="orange1")
-        table.add_column("Tecnologia", justify="center", style="cyan")
-        table.add_column("Suprimentos", justify="center", style="blue")
-        table.add_column("Moral", justify="center", style="yellow")
-        table.add_column("Estratégia", justify="center", style="violet")
 
         poderes = {}
 
@@ -2068,24 +2056,85 @@ A cobertura continua com o conflito entre {oponentes}.
         
         poderes_ordenados = dict(sorted(poderes.items(), key=lambda item: item[1], reverse=True))
 
-        for exercito in poderes_ordenados.keys():
-            table.add_row(f"{exercito.nome}", f"{exercito.marechal['nome']}", f"{exercito.marechal['perfil_estilizado']}", f"{exercito.poder}", f"{exercito.territorio}", f"{exercito.flow}", f"{exercito.forca}", f"{exercito.tecnologia}", f"{exercito.suprimentos}", f"{exercito.moral}", f"{exercito.estrategia}")
+        panels_dados = []
 
+        for exercito in poderes_ordenados.keys():
+            conteudo = f"""
+Marechal:    {exercito.marechal['nome']}
+Perfil:      {exercito.marechal['perfil_estilizado']}
+
+[red1]Poder[/red1] | [green]Território[/green] | [pink1]Flow[/pink1]
+{exercito.poder:<5} | {exercito.territorio:<10} | {exercito.flow}%
+
+[orange1]Força:[/orange1] {exercito.forca:>17}
+[cyan]Tecnologia:[/cyan] {exercito.tecnologia:>12}
+[blue1]Suprimentos:[/blue1] {exercito.suprimentos:>11}
+[yellow]Moral:[/yellow] {exercito.moral:>17}
+[violet]Estratégia:[/violet] {exercito.estrategia:>12}
+            
+[green3]PIB:         {exercito.resumo['pib']:.2f}%
+Inflação:    {exercito.resumo['inflacao']:.2f}%[/green3]
+
+LOCAIS DOMINADOS:
+"""
+            for i, local in enumerate(exercito.locais):
+                prefix = "└─" if i == len(exercito.locais)-1 else "├─"
+                frase = f"{prefix} {local.nome_personalizado}"
+                conteudo += f"{frase}\n"
+
+            panels_dados.append(
+                Panel(conteudo, title=exercito.nome, style="white", expand=False)
+            )
+        
         for exercito in self.exercitos:
             if exercito not in self.tropas_ativas:
-                table.add_row(f"[strike]{exercito.nome}[/strike]", f"[strike]{exercito.marechal['nome']}[/strike]", f"[strike]{exercito.marechal['perfil_estilizado']}[/strike]", f"[strike]{exercito.poder}[/strike]", f"[strike]{exercito.territorio}[/strike]", f"[strike]{exercito.flow}[/strike]", f"[strike]{exercito.forca}[/strike]", f"[strike]{exercito.tecnologia}[/strike]", f"[strike]{exercito.suprimentos}[/strike]", f"[strike]{exercito.moral}[/strike]", f"[strike]{exercito.estrategia}[/strike]")
+                conteudo = f"""[grey30]
+Marechal:    {exercito.marechal['nome_derrotado']}
+Perfil:      {exercito.marechal['perfil_derrotado']}
 
+Poder | Território | Flow
+{exercito.poder:<5} | {exercito.territorio:<10} | {exercito.flow}%
 
-        console.print(table)
-        print()
+Força: {exercito.forca:>17}
+Tecnologia: {exercito.tecnologia:>12}
+Suprimentos: {exercito.suprimentos:>11}
+Moral: {exercito.moral:>17}
+Estratégia: {exercito.estrategia:>12}
+            
+PIB:         {exercito.resumo['pib']:.2f}%
+Inflação:    {exercito.resumo['inflacao']:.2f}%
+
+LOCAIS DOMINADOS:
+"""
+                for i, local in enumerate(exercito.locais):
+                    prefix = "└─" if i == len(exercito.locais)-1 else "├─"
+                    frase = f"[grey30]{prefix} {local.nome_personalizado}[/grey30]"
+                    conteudo += f"{frase}\n"
+
+                panels_dados.append(
+                    Panel(conteudo, title=exercito.nome_derrotado, style="white", expand=False)
+                )
+
+        dados_row = Columns(panels_dados, expand=False, equal=True, align="center")
+
+        console.print(
+            Panel.fit(
+                dados_row,
+                title=f"Dia {self.tempo.dia} // Clima: {self.tempo.clima[0]}",
+                padding=(1, 2)
+            )
+        )
 
 
     def concluir_dia(self):
         from random import uniform
 
         for tropa in self.tropas_ativas:
-            tropa.resumo["pib"] -= round(uniform(0.01, 0.1), 2)
-            tropa.resumo["inflacao"] += round(uniform(0.01, 0.1), 2)
+            tropa.resumo["pib"] -= round(uniform(0.005, 0.05), 2)
+            tropa.resumo["inflacao"] += round(uniform(0.005, 0.05), 2)
+            
+            for local in tropa.locais:
+                local.gerar_bonus(tropa)
 
         self.tempo.dia += 1
         self.tempo.hora = 0
