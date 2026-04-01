@@ -2,17 +2,18 @@ class Exercito:
     def __init__(self, nome, cor, canal_nome, canal_sigla):
         from random import uniform
 
-        self.nome = f"[{cor}]{nome}[/{cor}]"
+        self.nome = nome
+        self.cor = cor
         self.nome_colorido = f"[{cor}]{nome}[/{cor}]"
         self.nome_derrotado = f"[grey30]{nome}[/grey30]"
         self.poder = 1
         self.flow = 0
         self.territorio = 300
-        self.forca = 20
-        self.tecnologia = 20
-        self.suprimentos = 20
-        self.moral = 20
-        self.estrategia = 20
+        self.forca = 300
+        self.tecnologia = 150
+        self.suprimentos = 150
+        self.moral = 150
+        self.estrategia = 150
         self.marechal = self.escolher_marechal()
         self.inimigos = []
 
@@ -78,7 +79,7 @@ class Exercito:
         perfil_derrotado = f'[grey30]{perfil}[/grey30]'
 
         return {
-            "nome": f"[bold underline white]{marechal}[/bold underline white]",
+            "nome": marechal,
             "perfil_estilizado": perfil_estilizado,
             "perfil": perfil,
             "nome_derrotado": nome_derrotado,
